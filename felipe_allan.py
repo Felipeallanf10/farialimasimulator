@@ -1,3 +1,5 @@
+from nickollas_teixeira import registrar_historico
+
 def atualizar_patrimonio_total(estado: dict):
     """
     Calcula o patrimônio total do jogador no início do turno.
@@ -41,11 +43,12 @@ def exibir_status_carteira(estado: dict, noticia_atual: str = ""):
     print(f"  Saldo Disponível: R$ {estado['saldo_disponivel']:.2f}")
     print("==================================================================================")
     
-    # Calcula o rendimento baseando-se no capital inicial do jogo (R$ 10.000,00)
+    # Calcula o rendimento baseando-se no capital inicial do jogo (R$ 10.000,00) sem contar os aportes mensais
     if estado['patrimonio_total'] > 10000.0 and estado["mes_atual"] > 1:
-        print(f"Lucro: R$ {estado['patrimonio_total'] - 10000.0:.2f}")
+        print(f"Lucro: R$ {estado['patrimonio_total'] - (10000.0 + (estado['mes_atual'] - 1) * 1000.0):.2f}")
+
     elif estado['patrimonio_total'] < 10000.0 and estado["mes_atual"] > 1:
-        print(f"Prejuízo: R$ {10000.0 - estado['patrimonio_total']:.2f}")
+        print(f"Prejuízo: R$ {(10000.0 + (estado['mes_atual'] - 1) * 1000.0) - estado['patrimonio_total']:.2f}")
         
     print(f"Mês Atual: {estado['mes_atual']}")
     print("Carteira de Ações:")
@@ -62,7 +65,7 @@ def exibir_status_carteira(estado: dict, noticia_atual: str = ""):
     print("==================================================================================")
 
 
-def calcular_compra(estado: dict) -> dict:
+def calcular_compra(historico: list, estado: dict) -> dict:
     """
     Gerencia a lógica de compra de ações.
     Possui travas de segurança para evitar compras sem saldo e tratamento de exceções para inputs inválidos.
@@ -118,10 +121,12 @@ def calcular_compra(estado: dict) -> dict:
     print(f"Compra de {quantidade_compra} ações de {acao_escolhida} realizada com sucesso!")
     print(f"Saldo disponível após a compra: R$ {estado['saldo_disponivel']:.2f}")
     
+    #registra o histórico da compra para análises futuras
+    registrar_historico(historico, f"Compra {quantidade_compra} {acao_escolhida}", estado)
     return estado
     
 
-def calcular_venda(estado: dict) -> dict:
+def calcular_venda(historico: list, estado: dict) -> dict:
     """
     Gerencia a lógica de venda de ações.
     Verifica se o usuário possui a ação em carteira antes de permitir a venda.
@@ -182,4 +187,5 @@ def calcular_venda(estado: dict) -> dict:
     print(f"Venda de {quantidade_venda} ações de {acao_escolhida} realizada com sucesso!")
     print(f"Saldo disponível após a venda: R$ {estado['saldo_disponivel']:.2f}")
     
+    registrar_historico(historico, f"Venda {quantidade_venda} {acao_escolhida}", estado)
     return estado
