@@ -44,13 +44,20 @@ def obter_precos_mes(mes):
     Função auxiliar: Retorna o dicionário de taxas correspondente ao mês.
     Lembrando que índices de tupla começam em 0, então mês 1 = índice 0.
     """
-    # Ex: return MATRIZ_TAXAS[mes - 1]
-    pass
+    return MATRIZ_TAXAS[mes - 1]
 
 
 def registrar_historico(historico, escolha, estado):
-    # Lógica para registrar a escolha do usuário e o estado atual no histórico
-    pass
+    # Registra um snapshot simples do estado e da escolha
+    historico.append({
+        "mes": estado["mes_atual"],
+        "escolha": escolha,
+        "saldo_disponivel": estado["saldo_disponivel"],
+        "patrimonio_total": estado["patrimonio_total"],
+        "carteira_quantidades": dict(estado["carteira_quantidades"]),
+        "precos_mercado": dict(estado["precos_mercado"]),
+    })
+    return historico
 
 
 def verificar_vitoria_derrota(estado):
@@ -59,8 +66,13 @@ def verificar_vitoria_derrota(estado):
     Se o mês for maior que 12, avalia o patrimônio (>= 25000 é Vitória).
     Retorna True para quebrar o loop do main.py se o jogo acabou, ou False para continuar.
     """
-    # Ex: if estado["mes_atual"] > 12: fazer os prints de fim de jogo e retornar True
-    pass
+    if estado["mes_atual"] > 12:
+        if estado["patrimonio_total"] >= 25000.0:
+            print("Vitoria! Voce atingiu a meta de patrimonio.")
+        else:
+            print("Derrota! Voce nao atingiu a meta de patrimonio.")
+        return True
+    return False
 
 
 def aplicar_evento_mercado(estado):
@@ -69,19 +81,27 @@ def aplicar_evento_mercado(estado):
     Se o estado["mes_atual"] for igual a 7, multiplica o valor atual 
     das ações de tecnologia (NVIDIA, AAPL, MSFT) por 0.85 (queda de 15%).
     """
-    # Ex: if estado["mes_atual"] == 7: aplica conta e alerta o usuário
-    pass
+    if estado["mes_atual"] == 7:
+        for ticker in ("NVIDIA", "AAPL", "MSFT"):
+            estado["precos_mercado"][ticker] *= 0.85
+    return estado
 
 
 def simular_virada_de_mes(estado):
     """
     Avança o relógio do jogo.
     1. Soma R$ 1.000 de salário no saldo_disponivel.
-    2. Pega as taxas do próximo mês e multiplica pelos precos_mercado atuais.
-    3. Soma +1 no mes_atual.
+    2. Soma +1 no mes_atual.
+    3. Pega as taxas do próximo mês e multiplica pelos precos_mercado atuais.
     """
-    # Lógica para simular a virada de mês, atualizando os preços com base na MATRIZ_TAXAS
-    pass
+    estado["saldo_disponivel"] += 1000.0
+    estado["mes_atual"] += 1
+
+    taxas = obter_precos_mes(estado["mes_atual"])
+    for ticker, fator in taxas.items():
+        estado["precos_mercado"][ticker] *= fator
+
+    return estado
 
 
 def obter_noticia_mes(mes) -> str:
