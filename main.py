@@ -12,7 +12,6 @@ from nickollas_teixeira import (
     aplicar_evento_mercado, 
     obter_precos_mes, 
     obter_noticia_mes,
-    registrar_historico, 
     verificar_vitoria_derrota,
     simular_virada_de_mes       
 )
@@ -30,7 +29,7 @@ def main():
     
     # Estrutura imutável para as opções do menu
     opcoes = ("Comprar Ações", "Vender Ações", "Passar Mês")
-
+    historico = []  # Lista para armazenar o histórico de jogadas, pode ser usada para análises futuras
     print("Bem-vindo ao Simulador de Investimentos!")
     print("Tente alcançar o objetivo de mais de R$ 25.000 em 12 meses.\n")
 
@@ -53,22 +52,32 @@ def main():
         # 5. Roteamento de fluxo com base na entrada do usuário
         if escolha == "1":
             # Sub-loop de compra: Altera o estado, mas não avança o tempo
-            estado = calcular_compra(estado)
+            estado = calcular_compra(historico, estado)
             
         elif escolha == "2":
             # Sub-loop de venda: Altera o estado, mas não avança o tempo
-            estado = calcular_venda(estado)
+            estado = calcular_venda(historico, estado)
+
             
         elif escolha == "3":
             # Avanço de tempo: Dispara as engrenagens de mercado
-            # estado = simular_virada_de_mes(estado)
-            # estado = aplicar_evento_mercado(estado)
-            pass
+            estado = simular_virada_de_mes(estado)
+            estado = aplicar_evento_mercado(estado)
+
         else:
             # Fallback de segurança para escolhas que não sejam 1, 2 ou 3
             print("Opção inválida. Por favor, escolha 1, 2 ou 3.")
-            
+    
+    #Antes do fim do jogo exibe histórico completo para o usuário analisar suas decisões ao longo dos meses
+    print("\nHistórico de Jogadas:")
+    for registro in historico:
+        print(f"Mês {registro['mes']}: Escolha - {registro['escolha']}, Saldo - R$ {registro['saldo_disponivel']:.2f}, Patrimônio - R$ {registro['patrimonio_total']:.2f}")
+        print(f"Carteira: {registro['carteira_quantidades']}, Preços: {registro['precos_mercado']}")
+        print("----------------------------------------------------------------------------------")
 
+    print("Obrigado por jogar o Simulador de Investimentos da Faria Lima!")
+    print("Esperamos que tenha aprendido algo sobre o mercado financeiro e a importância de decisões estratégicas.")
+    print("Até a próxima! 🚀")
     # Break do loop indica que a condição de fim de jogo foi atingida
     print("Fim de jogo!")
 
