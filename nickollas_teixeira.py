@@ -88,18 +88,14 @@ def aplicar_evento_mercado(estado):
 
 
 def simular_virada_de_mes(estado):
-    """
-    Avança o relógio do jogo.
-    1. Soma R$ 1.000 de salário no saldo_disponivel.
-    2. Soma +1 no mes_atual.
-    3. Pega as taxas do próximo mês e multiplica pelos precos_mercado atuais.
-    """
     estado["saldo_disponivel"] += 1000.0
     estado["mes_atual"] += 1
 
-    taxas = obter_precos_mes(estado["mes_atual"])
-    for ticker, fator in taxas.items():
-        estado["precos_mercado"][ticker] *= fator
+    # TRAVA DE SEGURANÇA: Só atualiza os preços se o jogo não tiver acabado
+    if estado["mes_atual"] <= 12:
+        taxas = obter_precos_mes(estado["mes_atual"])
+        for ticker, fator in taxas.items():
+            estado["precos_mercado"][ticker] *= fator
 
     return estado
 
