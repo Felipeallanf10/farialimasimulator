@@ -43,12 +43,18 @@ def exibir_status_carteira(estado: dict, noticia_atual: str = ""):
     print(f"  Saldo Disponível: R$ {estado['saldo_disponivel']:.2f}")
     print("==================================================================================")
     
-    # Calcula o rendimento baseando-se no capital inicial do jogo (R$ 10.000,00) sem contar os aportes mensais
-    if estado['patrimonio_total'] > 10000.0 and estado["mes_atual"] > 1:
-        print(f"Lucro: R$ {estado['patrimonio_total'] - (10000.0 + (estado['mes_atual'] - 1) * 1000.0):.2f}")
+    # Calcula todo o dinheiro que entrou no jogo (10k iniciais + 1k por mês passado)
+    capital_investido = 10000.0 + (estado['mes_atual'] - 1) * 1000.0
+    
+    # Compara o patrimônio com o capital investido real, e não com 10.000 fixos
+    if estado['patrimonio_total'] > capital_investido:
+        print(f"Lucro: R$ {estado['patrimonio_total'] - capital_investido:.2f}")
 
-    elif estado['patrimonio_total'] < 10000.0 and estado["mes_atual"] > 1:
-        print(f"Prejuízo: R$ {(10000.0 + (estado['mes_atual'] - 1) * 1000.0) - estado['patrimonio_total']:.2f}")
+    elif estado['patrimonio_total'] < capital_investido:
+        print(f"Prejuízo: R$ {capital_investido - estado['patrimonio_total']:.2f}")
+    
+    elif estado["mes_atual"] > 1:
+        print("Situação: Estável (R$ 0.00 de variação)")
         
     print(f"Mês Atual: {estado['mes_atual']}")
     print("Carteira de Ações:")
