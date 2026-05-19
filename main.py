@@ -10,10 +10,10 @@ from felipe_allan import (
 )
 from nickollas_teixeira import (
     aplicar_evento_mercado, 
-    obter_precos_mes, 
     obter_noticia_mes,
     verificar_vitoria_derrota,
-    simular_virada_de_mes       
+    simular_virada_de_mes,
+    registrar_historico       
 )
 
 def main():
@@ -63,6 +63,7 @@ def main():
             # Avanço de tempo: Dispara as engrenagens de mercado
             estado = simular_virada_de_mes(estado)
             estado = aplicar_evento_mercado(estado)
+            registrar_historico(historico, "Passou o Mês (Aporte R$ 1000)", estado)
 
         else:
             # Fallback de segurança para escolhas que não sejam 1, 2 ou 3
