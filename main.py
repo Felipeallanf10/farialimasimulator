@@ -22,7 +22,7 @@ def main():
     estado: dict = {
         "saldo_disponivel": 10000.0,
         "patrimonio_total": 10000.0,
-        "mes_atual": 1,
+        "mes_atual": 1  ,
         "carteira_quantidades": {"NVIDIA": 0, "AAPL": 0, "MSFT": 0, "PETR4": 0, "VALE3": 0},
         "precos_mercado": {"NVIDIA": 100.0, "AAPL": 100.0, "MSFT": 100.0, "PETR4": 100.0, "VALE3": 100.0},
     }

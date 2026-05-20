@@ -79,7 +79,14 @@ def calcular_compra(historico: list, estado: dict) -> dict:
     print("Você escolheu comprar ações, muito bem! Vamos lá.")
 
     # Trava de segurança 1: Impede o jogador de tentar comprar se estiver zerado
-    if estado["saldo_disponivel"] <= 0:
+    # Verifca se o saldo disponível é menor que o preço de uma unidade de qualquer ação
+    saldo_insuficiente_para_comprar: bool = False
+
+    for acao in estado["precos_mercado"]:
+        if estado["saldo_disponivel"] < estado["precos_mercado"][acao]:
+            saldo_insuficiente_para_comprar = True
+    
+    if saldo_insuficiente_para_comprar:
         print("Saldo insuficiente para realizar compras. Operação cancelada.")
         return estado
 
@@ -131,6 +138,9 @@ def calcular_compra(historico: list, estado: dict) -> dict:
     registrar_historico(historico, f"Compra {quantidade_compra} {acao_escolhida}", estado)
     return estado
     
+
+    [],
+  
 
 def calcular_venda(historico: list, estado: dict) -> dict:
     """
