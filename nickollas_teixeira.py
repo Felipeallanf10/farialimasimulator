@@ -48,6 +48,9 @@ def obter_precos_mes(mes):
 
 
 def registrar_historico(historico, escolha, estado):
+    # Não registra histórico se o mês passou do limite do jogo (mês 12)
+    if estado["mes_atual"] > 12:
+        return historico
     # Registra um snapshot simples do estado e da escolha
     historico.append({
         "mes": estado["mes_atual"],
